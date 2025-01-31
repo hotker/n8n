@@ -15,6 +15,7 @@ import {
 	prepareFormReturnItem,
 	resolveRawData,
 	isFormConnected,
+	sanitizeHtml,
 } from '../utils';
 
 describe('FormTrigger, parseFormDescription', () => {
@@ -38,6 +39,29 @@ describe('FormTrigger, parseFormDescription', () => {
 
 		descriptions.forEach(({ description, expected }) => {
 			expect(createDescriptionMetadata(description)).toBe(expected);
+		});
+	});
+});
+
+describe('FormTrigger, sanitizeHtml', () => {
+	it('should remove forbidden HTML tags', () => {
+		const givenHtml = [
+			{
+				html: '<script>alert("hello world")</script>',
+				expected: '',
+			},
+			{
+				html: '<style>body { color: red; }</style>',
+				expected: '',
+			},
+			{
+				html: '<input type="text" value="test">',
+				expected: '',
+			},
+		];
+
+		givenHtml.forEach(({ html, expected }) => {
+			expect(sanitizeHtml(html)).toBe(expected);
 		});
 	});
 });
@@ -79,6 +103,18 @@ describe('FormTrigger, formWebhook', () => {
 				requiredField: true,
 				acceptFileTypes: '.pdf,.doc',
 				multipleFiles: false,
+			},
+			{
+				fieldLabel: 'Custom HTML',
+				fieldType: 'html',
+				html: '<div>Test HTML</div>',
+				requiredField: false,
+			},
+			{
+				fieldName: 'Powerpuff Girl',
+				fieldValue: 'Blossom',
+				fieldType: 'hiddenField',
+				fieldLabel: '',
 			},
 		];
 
@@ -132,6 +168,27 @@ describe('FormTrigger, formWebhook', () => {
 					isFileInput: true,
 					label: 'Resume',
 					multipleFiles: '',
+					placeholder: undefined,
+				},
+				{
+					id: 'field-4',
+					errorId: 'error-field-4',
+					label: 'Custom HTML',
+					inputRequired: '',
+					defaultValue: '',
+					placeholder: undefined,
+					html: '<div>Test HTML</div>',
+					isHtml: true,
+				},
+				{
+					id: 'field-5',
+					errorId: 'error-field-5',
+					hiddenName: 'Powerpuff Girl',
+					hiddenValue: 'Blossom',
+					label: 'Powerpuff Girl',
+					isHidden: true,
+					inputRequired: '',
+					defaultValue: '',
 					placeholder: undefined,
 				},
 			],
@@ -260,9 +317,21 @@ describe('FormTrigger, prepareFormData', () => {
 				acceptFileTypes: '.jpg,.png',
 				multipleFiles: true,
 			},
+			{
+				fieldLabel: 'username',
+				fieldName: 'username',
+				fieldValue: 'powerpuffgirl125',
+				fieldType: 'hiddenField',
+			},
+			{
+				fieldLabel: 'villain',
+				fieldName: 'villain',
+				fieldValue: 'Mojo Dojo',
+				fieldType: 'hiddenField',
+			},
 		];
 
-		const query = { Name: 'John Doe', Email: 'john@example.com' };
+		const query = { Name: 'John Doe', Email: 'john@example.com', villain: 'princess morbucks' };
 
 		const result = prepareFormData({
 			formTitle: 'Test Form',
@@ -327,6 +396,28 @@ describe('FormTrigger, prepareFormData', () => {
 					isFileInput: true,
 					acceptFileTypes: '.jpg,.png',
 					multipleFiles: 'multiple',
+				},
+				{
+					id: 'field-4',
+					errorId: 'error-field-4',
+					label: 'username',
+					inputRequired: '',
+					defaultValue: '',
+					placeholder: undefined,
+					hiddenName: 'username',
+					hiddenValue: 'powerpuffgirl125',
+					isHidden: true,
+				},
+				{
+					id: 'field-5',
+					errorId: 'error-field-5',
+					label: 'villain',
+					inputRequired: '',
+					defaultValue: 'princess morbucks',
+					placeholder: undefined,
+					hiddenName: 'villain',
+					isHidden: true,
+					hiddenValue: 'princess morbucks',
 				},
 			],
 			useResponseData: true,

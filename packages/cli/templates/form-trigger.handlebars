@@ -371,6 +371,16 @@
 									</div>
 								{{/if}}
 
+								{{#if isHtml}}
+									<div class="form-group">
+										{{{html}}}
+									</div>
+								{{/if}}
+
+								{{#if isHidden}}
+									<input type="hidden" id="{{id}}" name="{{id}}" value="{{hiddenValue}}" />
+								{{/if}}
+
 								{{#if isTextarea}}
 									<div class='form-group'>
 										<label class='form-label {{inputRequired}}' for='{{id}}'>{{label}}</label>

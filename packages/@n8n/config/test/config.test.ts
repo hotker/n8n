@@ -107,6 +107,9 @@ describe('GlobalConfig', () => {
 				maxFileSizeInKB: 10240,
 			},
 		},
+		externalHooks: {
+			files: [],
+		},
 		externalSecrets: {
 			preferGet: false,
 			updateInterval: 300,
@@ -138,6 +141,7 @@ describe('GlobalConfig', () => {
 		externalStorage: {
 			s3: {
 				host: '',
+				protocol: 'https',
 				bucket: {
 					name: '',
 					region: '',
@@ -221,7 +225,7 @@ describe('GlobalConfig', () => {
 			},
 		},
 		taskRunners: {
-			enabled: true,
+			enabled: false,
 			mode: 'internal',
 			path: '/runners',
 			authToken: '',
